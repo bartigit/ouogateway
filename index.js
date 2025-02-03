@@ -18,7 +18,7 @@ app.get("/gateway", (req, res) => {
     const fetchSite = req.get("Sec-Fetch-Site");
     const referrer = req.get("Referer") || req.get("Referrer");
 
-    if (!referrer || !referrer.startsWith(ALLOWED_REFERRER) || fetchSite !== "cross-site" || !refferer.startsWith("https://ouo.touch")) {
+    if (!referrer || (!referrer.startsWith("https://ouo.io") && !referrer.startsWith("https://ouo.press")) || fetchSite !== "cross-site") {
         return res.redirect("https://ouo.io/jIcX4m");
     }
 
