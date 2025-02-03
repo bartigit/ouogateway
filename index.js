@@ -11,7 +11,11 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use((req, res, next) => {
     const clientIP = req.get("X-Forwarded-For") || req.ip; // Pobranie IP użytkownika/proxy
+    const origin = req.get("Origin"); // Pobranie Origin
+
     console.log("Żądanie z IP:", clientIP);
+    console.log("Origin:", origin); // Sprawdzenie, skąd pochodzi żądanie
+
     next();
 });
 
