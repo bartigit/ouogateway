@@ -9,6 +9,12 @@ const ALLOWED_REFERRER = "https://ouo.io";
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use((req, res, next) => {
+    const clientIP = req.get("X-Forwarded-For") || req.ip; // Pobranie IP użytkownika/proxy
+    console.log("Żądanie z IP:", clientIP);
+    next();
+});
+
 app.get("/gateway", (req, res) => {
     const referrer = req.get("Referer") || req.get("Referrer");
 
