@@ -26,6 +26,12 @@ app.get("/gateway", (req, res) => {
 });
 
 app.get("/get-token", (req, res) => {
+    const jsHeader = req.get("X-JS-Enabled");
+
+    if (!jsHeader || jsHeader !== "true") {
+        return res.status(403).json({ error: "JavaScript Required" });
+    }
+    
     const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
 
     res.send(token);
