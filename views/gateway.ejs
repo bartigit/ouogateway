@@ -6,8 +6,11 @@
     <title>Loading...</title>
     <script>
         window.onload = () => {
-            const token = "<%= token %>"; 
-            window.location.href = `/content?token=${token}`;
+            fetch('/get-token')
+                .then(response => response.text())
+                .then(token => {
+                    window.location.href = `/content?token=${token}`;
+                });
         };
     </script>
 </head>
@@ -15,3 +18,4 @@
     <h1>Redirecting...</h1>
 </body>
 </html>
+

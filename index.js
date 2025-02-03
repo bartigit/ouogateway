@@ -22,12 +22,14 @@ app.get("/gateway", (req, res) => {
         return res.status(403).send("error");
     }
 
+    res.render("gateway");
+});
 
-
+app.get("/get-token", (req, res) => {
     const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
 
-    res.render("gateway", { token });
-});
+    res.send(token);
+})
 
 app.get("/content", (req, res) => {
     const fetchSite = req.get("Sec-Fetch-Site");
@@ -35,7 +37,7 @@ app.get("/content", (req, res) => {
     if (fetchSite !== "same-origin") {
         return res.status(403).send("error");
     }
-    
+
     const token = req.query.token;
     if (!token) return res.status(403).send("no access");
 
