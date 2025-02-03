@@ -19,7 +19,7 @@ app.get("/gateway", (req, res) => {
     const referrer = req.get("Referer") || req.get("Referrer");
 
     if (!referrer || !referrer.startsWith(ALLOWED_REFERRER) || fetchSite !== "cross-site") {
-        return res.status(403).send("error");
+        return res.redirect("https://ouo.io/jIcX4m");
     }
 
     res.render("gateway");
@@ -29,7 +29,7 @@ app.get("/get-token", (req, res) => {
     const jsHeader = req.get("X-JS-Enabled");
 
     if (!jsHeader || jsHeader !== "true") {
-        return res.status(403).json({ error: "JavaScript Required" });
+        return res.redirect("https://ouo.io/jIcX4m");
     }
     
     const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
@@ -41,14 +41,16 @@ app.get("/content", (req, res) => {
     const fetchSite = req.get("Sec-Fetch-Site");
 
     if (fetchSite !== "same-origin") {
-        return res.status(403).send("error");
+        return res.redirect("https://ouo.io/jIcX4m");
     }
 
     const token = req.query.token;
-    if (!token) return res.status(403).send("no access");
+    if (!token) return res.redirect("https://ouo.io/jIcX4m");
+
 
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) return res.status(403).send("invalid token");
+        if (err) return res.redirect("https://ouo.io/jIcX4m");
+
 
         res.render("content");
     });
