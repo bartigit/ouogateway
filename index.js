@@ -38,4 +38,4 @@ app.get("/content", (req, res) => {
     });
 });
 
-app.listen(5555, () => console.log("server started on http://localhost:5555"));
+app.listen(5555, "::", () => console.log("server started on http://localhost:5555"));
