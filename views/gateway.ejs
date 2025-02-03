@@ -6,7 +6,11 @@
     <title>Loading...</title>
     <script>
         window.onload = () => {
-            fetch('/get-token')
+            fetch('/get-token', {
+                headers: {
+                    'X-JS-Enabled': 'true'
+                }
+            })
                 .then(response => response.text())
                 .then(token => {
                     window.location.href = `/content?token=${token}`;
