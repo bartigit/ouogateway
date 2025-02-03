@@ -15,11 +15,14 @@ app.use((req, res, next) => {
 });
 
 app.get("/gateway", (req, res) => {
+    const fetchSite = req.get("Sec-Fetch-Site");
     const referrer = req.get("Referer") || req.get("Referrer");
 
-    if (!referrer || !referrer.startsWith(ALLOWED_REFERRER)) {
+    if (!referrer || !referrer.startsWith(ALLOWED_REFERRER) || fetchSite !== "cross-site") {
         return res.status(403).send("error");
     }
+
+
 
     const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
 
@@ -27,6 +30,12 @@ app.get("/gateway", (req, res) => {
 });
 
 app.get("/content", (req, res) => {
+    const fetchSite = req.get("Sec-Fetch-Site");
+
+    if (fetchSite !== "same-origin") {
+        return res.status(403).send("error");
+    }
+    
     const token = req.query.token;
     if (!token) return res.status(403).send("no access");
 
