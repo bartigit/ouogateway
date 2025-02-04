@@ -25,17 +25,36 @@ app.get("/gateway", (req, res) => {
     res.render("gateway");
 });
 
-app.get("/get-token", (req, res) => {
-    const jsHeader = req.get("X-JS-Enabled");
+app.post("/get-token", async (req, res) => {
+    const recaptchaResponse = req.body["g-recaptcha-response"];
 
-    if (!jsHeader || jsHeader !== "true") {
-        return res.redirect("https://ouo.io/jIcX4m");
+    if (!recaptchaResponse) {   
+        return res.redirect("https://ouo.io/jIcX4m");        
     }
-    
-    const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
 
-    res.send(token);
-})
+    try {
+        // Weryfikacja reCAPTCHA
+        const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
+            params: {
+                secret: RECAPTCHA_SECRET,
+                response: recaptchaResponse,
+            },
+        });
+
+        if (!response.data.success) {
+            return res.redirect("https://ouo.io/jIcX4m");
+        }
+
+        // Jeśli reCAPTCHA jest poprawna, generujemy token
+        const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
+
+        return res.json({ token });
+
+    } catch (error) {
+        console.error("Błąd weryfikacji reCAPTCHA:", error);
+        return res.status(500).json({ error: "Błąd serwera reCAPTCHA." });
+    }
+});
 
 app.get("/content", (req, res) => {
     const fetchSite = req.get("Sec-Fetch-Site");

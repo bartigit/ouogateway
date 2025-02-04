@@ -4,22 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
-        window.onload = () => {
+        function onSubmit(event) {
+            event.preventDefault();
+            
+            let recaptchaResponse = document.querySelector(".g-recaptcha-response").value;
+            if (!recaptchaResponse) {
+                alert("Proszę rozwiązać reCAPTCHA przed wysłaniem formularza.");
+                return;
+            }
+
+            let formData = new FormData(document.getElementById("myForm"));
+            formData.append("g-recaptcha-response", recaptchaResponse);
+
             fetch('/get-token', {
-                headers: {
-                    'X-JS-Enabled': 'true'
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    window.location.href = `/content?token=${data.token}`;
+                } else {
+                    alert("Błąd weryfikacji reCAPTCHA.");
                 }
             })
-                .then(response => response.text())
-                .then(token => {
-                    window.location.href = `/content?token=${token}`;
-                });
-        };
+            .catch(error => console.error("Błąd połączenia:", error));
+        }
     </script>
 </head>
 <body>
-    <h1>Redirecting...</h1>
+    <h1>Weryfikacja...</h1>
+    <br>
+    <form id="myForm" onsubmit="onSubmit(event)">
+        <div class="g-recaptcha" data-sitekey="xxx"></div>
+
+        <button type="submit">OK</button>
+    </form>
 </body>
 </html>
-
