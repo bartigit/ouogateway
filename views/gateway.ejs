@@ -15,8 +15,8 @@
                 return;
             }
 
-            let formData = new FormData(document.getElementById("myForm"));
-            formData.append("g-recaptcha-response", recaptchaResponse);
+            // let formData = new FormData(document.getElementById("myForm"));
+            // formData.append("g-recaptcha-response", recaptchaResponse);
 
             fetch('/get-token', {
                 method: 'POST',
