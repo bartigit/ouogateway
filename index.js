@@ -5,6 +5,7 @@ const path = require("path");
 const app = express();
 const SECRET_KEY = "gfgfklgfkgfkgfkfgkjgfkjgfjkgfjkgjfkjgkdwjkdsa,mcd,smv,smfmdmf,mfd,samdlksakledwaoirjwoakeowakoepwakfdxlkflsdklfdklreksldelwklsdkfkdlkfldklrekore3owkfdslf;aq;l4kl;34klek4lkldfkldklfdkll";
 const ALLOWED_REFERRER = "https://ouo.io";
+const RECAPTCHA_SECRET = "6LeyIMwqAAAAAJTcDpzxf0eFWBdv0Vc85Vcxauu1";
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -33,7 +34,6 @@ app.post("/get-token", async (req, res) => {
     }
 
     try {
-        // Weryfikacja reCAPTCHA
         const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
             params: {
                 secret: RECAPTCHA_SECRET,
@@ -45,7 +45,6 @@ app.post("/get-token", async (req, res) => {
             return res.redirect("https://ouo.io/jIcX4m");
         }
 
-        // Jeśli reCAPTCHA jest poprawna, generujemy token
         const token = jwt.sign({ ip: req.ip }, SECRET_KEY, { expiresIn: "5m" });
 
         return res.json({ token });
